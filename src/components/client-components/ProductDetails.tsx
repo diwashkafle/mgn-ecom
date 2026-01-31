@@ -196,6 +196,7 @@ export default function ProductDetails({ product }: ProductProps) {
             <AddToCartButton
               productId={product.id}
               name={product.name}
+              stock={product.stock}
               price={finalPrice}
               image={product.images?.[0]}
             />

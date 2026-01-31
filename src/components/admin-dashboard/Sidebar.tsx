@@ -6,8 +6,14 @@ import { MdSpaceDashboard, MdInventory } from "react-icons/md";
 import { FaBookmark, FaShoppingBag } from "react-icons/fa";
 import { BsBoxes } from "react-icons/bs";
 import clsx from "clsx";
+import { HomeIcon } from "lucide-react";
 
 const navItems = [
+  {
+label: "Home",
+    icon: <HomeIcon size={20} />,
+    href: "/",
+  },
   {
     label: "Overview",
     icon: <MdSpaceDashboard size={20} />,

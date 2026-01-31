@@ -9,6 +9,7 @@ type AddToCartButtonProps = {
   productId: string;
   name: string;
   price: number;
+  stock:number;
   image: string;
   quantity?: number;
 };
@@ -16,6 +17,7 @@ type AddToCartButtonProps = {
 export default function AddToCartButton({
   productId,
   name,
+  stock,
   price,
   image,
   quantity = 1,
@@ -40,9 +42,9 @@ export default function AddToCartButton({
   };
 
   return (
-    <Button onClick={handleClick} variant="default">
+    <Button disabled={stock<=0} onClick={handleClick} variant="default">
       <ShoppingCart className="w-4 h-4 mr-2" />
-      Add to Cart
+      Add to Cart {stock}
     </Button>
   );
 }
