@@ -115,7 +115,7 @@ export default function Hero() {
               src={banner.image}
               alt={banner.title}
               fill
-              className="object-cover"
+              className="object-cover object-center"
             />
             <div className="absolute hidden bottom-0 md:flex flex-col justify-center items-start text-white p-10">
               {banner.ctaLink && (
