@@ -44,7 +44,7 @@ export default function AddToCartButton({
   return (
     <Button disabled={stock<=0} onClick={handleClick} variant="default">
       <ShoppingCart className="w-4 h-4 mr-2" />
-      Add to Cart {stock}
+      Add to Cart
     </Button>
   );
 }
