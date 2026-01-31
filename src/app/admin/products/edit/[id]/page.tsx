@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma"; 
 import ProductForm, { ProductData, Category } from "@/components/admin-dashboard/ProductForm";
+import { SpecificationGroup, VariantGroup } from "@/Types/adminComponentTypes";
 
 interface Subcategory {
   id: string;
@@ -13,38 +15,42 @@ export default async function EditProductPage(
   const { id } = await params;
   const productId = id;
 
-  const [productRes, categoryRes, subcategoryRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/product/${productId}`, { cache: "no-store" }),
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/category`, { cache: "no-store" }),
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/subcategory`, { cache: "no-store" }),
+  // Fetch directly from database instead of API routes
+  const [product, categories, subcategories] = await Promise.all([
+    prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        category: true,
+        subcategory: true,
+      },
+    }),
+    prisma.category.findMany(),
+    prisma.subcategory.findMany(),
   ]);
 
-  if (!productRes.ok || !categoryRes.ok || !subcategoryRes.ok) {
+  // Handle not found
+  if (!product) {
     notFound();
   }
 
-  const product = await productRes.json();
-  const categories = await categoryRes.json();
-  const subcategories: Subcategory[] = await subcategoryRes.json();
-
   const formattedProduct: ProductData = {
-    id: product.id,
-    name: product.name,
-    categoryId: product.categoryId,
-    price: product.price.toString(),
-    crossedPrice: product.crossedPrice.toString(),
-    stock: product.stock.toString(),
-    status: product.status,
-    description: product.description,
-    images: product.images,
-    specifications: product.specifications || [],
-    variants: product.variants || [],
-  };
+  id: product.id,
+  name: product.name,
+  categoryId: product.categoryId,
+  price: Number(product.price),          
+  crossedPrice: Number(product.crossedPrice || 0),  
+  stock: product.stock,                    
+  status: product.status,
+  description: product.description || "",
+  images: product.images as unknown as string[],   
+  specifications: product.specifications as unknown as SpecificationGroup[], 
+  variants: product.variants as unknown as VariantGroup[], 
+};
 
   return (
     <ProductForm 
       categories={categories as Category[]}
-      subcategories={subcategories}
+      subcategories={subcategories as Subcategory[]}
       mode="edit"
       initialData={formattedProduct}
     />
